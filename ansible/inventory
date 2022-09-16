@@ -1,0 +1,13 @@
+[ubuntuservers]
+kubemaster01.ward.lab
+kubemaster02.ward.lab
+kubeworker02.ward.lab
+kubeworker01.ward.lab
+
+[masters]
+kubemaster01.ward.lab
+kubemaster02.ward.lab
+
+[workers]
+kubeworker02.ward.lab
+kubeworker01.ward.lab
