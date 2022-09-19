@@ -3,11 +3,15 @@ kubemaster01.ward.lab
 kubemaster02.ward.lab
 kubeworker02.ward.lab
 kubeworker01.ward.lab
+kubeworker03.ward.lab
 
-[masters]
+[primarymasters]
 kubemaster01.ward.lab
+
+[secondarymasters]
 kubemaster02.ward.lab
 
 [workers]
 kubeworker02.ward.lab
 kubeworker01.ward.lab
+kubeworker03.ward.lab
