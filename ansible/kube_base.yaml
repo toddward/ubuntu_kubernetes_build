@@ -1,6 +1,6 @@
 ---
 - name: Build Base Servers For Kubernetes Install
-  hosts: newworkers
+  hosts: servers
   become: yes
   tasks:
   - name: Ensure Servers Are Up To Date
