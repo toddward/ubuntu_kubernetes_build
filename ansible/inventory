@@ -4,12 +4,10 @@ kubemaster02.ward.lab
 kubeworker02.ward.lab
 kubeworker01.ward.lab
 
-[primarymasters]
+[masters]
 kubemaster01.ward.lab
-
-[secondarymasters]
 kubemaster02.ward.lab
 
 [workers]
-kubeworker02.ward.lab
 kubeworker01.ward.lab
+kubeworker02.ward.lab

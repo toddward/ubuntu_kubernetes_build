@@ -1,0 +1,63 @@
+---
+- name: Tune Firewall for Master Nodes
+  hosts: masters
+  become: yes
+  tasks:
+  - name: Disable UFW
+    ansible.builtin.systemd:
+      name: ufw.service
+      state: stopped
+      enabled: no
+  - name: Install firewalld
+    ansible.builtin.apt:
+      pkg:
+        - firewalld
+      update_cache: yes
+  - name: Disable UFW
+    ansible.builtin.systemd:
+      name: firewalld.service
+      state: started
+      enabled: yes 
+  - name: Open Required ports
+    firewalld:
+      permanent: yes
+      immediate: yes
+      port: "{{item.port}}/{{item.proto}}"
+      state: "{{item.state}}"
+      zone: "{{item.zone}}"
+    with_items:
+      - {port: "6443", proto: "tcp", state: "enabled", zone: "public" }
+      - {port: "2379-2380", proto: "tcp", state: "enabled", zone: "public" }
+      - {port: "10250-10252", proto: "tcp", state: "enabled", zone: "public" }
+      - {port: "10255", proto: "tcp", state: "enabled", zone: "public" }
+
+- name: Tune Firewall for Worker Nodes
+  hosts: workers
+  become: yes
+  tasks:
+  - name: Disable UFW
+    ansible.builtin.systemd:
+      name: ufw.service
+      state: stopped
+      enabled: no
+  - name: Install firewalld
+    ansible.builtin.apt:
+      pkg:
+        - firewalld
+      update_cache: yes
+  - name: Disable UFW
+    ansible.builtin.systemd:
+      name: firewalld.service
+      state: started
+      enabled: yes 
+  - name: Open Required ports
+    firewalld:
+      permanent: yes
+      immediate: yes
+      port: "{{item.port}}/{{item.proto}}"
+      state: "{{item.state}}"
+      zone: "{{item.zone}}"
+    with_items:
+      - {port: "30000-32767", proto: "tcp", state: "enabled", zone: "public" }
+      - {port: "10250", proto: "tcp", state: "enabled", zone: "public" }
+      - {port: "10255", proto: "tcp", state: "enabled", zone: "public" }
