@@ -9,14 +9,14 @@
       state: latest
   - name: Disable Swap
     ansible.builtin.command: swapoff -a
-  - name: Ensure Swap is Off
+  - name: Ensure Swap Is Not Enabled On Reboot
     ansible.builtin.command: 
       cmd: sudo sed -i '/swap/ s/^#*/# /' /etc/fstab
-  - name: ensure file exists
+  - name: Ensure containerd.conf File Exists
     file:
       path: /etc/modules-load.d/containerd.conf
       state: touch
-  - name: Load Kernel Modules
+  - name: Set Kernel Modules Required for containerd.conf
     ansible.builtin.blockinfile:
       path: /etc/modules-load.d/containerd.conf
       block: |
@@ -28,7 +28,7 @@
   - name: Load Kernel Modules
     ansible.builtin.command: 
       cmd: modprobe br_netfilter
-  - name: ensure file exists
+  - name: Ensure kubernetes.conf File Exists
     file:
       path: /etc/sysctl.d/kubernetes.conf
       state: touch
@@ -51,17 +51,17 @@
       - software-properties-common 
       - apt-transport-https 
       - ca-certificates
-  - name: Enable Docker Repository - Add Key
+  - name: Enable Docker Repository - Get Apt Key
     ansible.builtin.command: 
       cmd: wget https://download.docker.com/linux/ubuntu/gpg 
-  - name: Add Apt Key
+  - name: Enable Docker Repository - Add Apt Key
     ansible.builtin.command:
       cmd: apt-key add gpg
   - name: Enable Docker Repository - Add Repository
     ansible.builtin.apt_repository:
       repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable
       state: present
-  - name: Update repositories cache and install "containerd.io" package
+  - name: Update Repositories Cache and Install "containerd.io" package
     ansible.builtin.apt:
       name: containerd.io
       update_cache: yes
@@ -71,7 +71,7 @@
   - name: Configure containerd so that it starts using systemd as cgroup.
     ansible.builtin.command: 
       cmd: sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
-  - name: Restart and enable containerd
+  - name: Restart and Enable Containerd
     ansible.builtin.systemd:
       name: containerd.service
       state: restarted
