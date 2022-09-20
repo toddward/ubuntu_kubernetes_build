@@ -20,21 +20,32 @@
 
 7. Join the nodes:
 
-    * Generate the certificate key
+    * Review the output generated to connect additional workers. 
 
-      `kubeadm certs certificate-key`
+    * If additional masters need to be joined, the following should be done:
 
-    * Print the join command
+        * Ensure keys are uploaded from primary master:
 
-      `kubeadm token create --print-join-command`
+          `sudo kubeadm init phase upload-certs --upload-certs`
 
-    * Add the following flags to the above join command
+          Ensure you get the certificate key (part of output from command). Example:
 
-      `--control-plane --certificate-key "Certificate-key from step 1"`
+          ```[upload-certs] Storing the certificates in Secret "kubeadm-certs" in the "kube-system" Namespace
+          [upload-certs] Using certificate key:
+          92081447c52a73d2297a704f7b0554a4b9c181968787f3b041f18615a8190e13
+          ```
 
-    * Command should look like below
+        * Print the join command
 
-      `sudo kubeadm join 192.168.0.200:6443 --token 9vr73a.a8uxyaju799qwdjv --discovery-token-ca-cert-hash sha256:7c2e69131a36ae2a042a339b33381c6d0d43887e2de83720eff5359e26aec866 --control-plane --certificate-key f8902e114ef118304e561c3ecd4d0b543adc226b7a07f675f56564185ffe0c07`
+          `kubeadm token create --print-join-command`
+
+        * Add the following flags to the above join command
+
+          `--control-plane --certificate-key "upload certs section"`
+
+        * Command should look like below
+
+          `sudo kubeadm join 192.168.0.200:6443 --token 9vr73a.a8uxyaju799qwdjv --discovery-token-ca-cert-hash sha256:7c2e69131a36ae2a042a339b33381c6d0d43887e2de83720eff5359e26aec866 --control-plane --certificate-key 92081447c52a73d2297a704f7b0554a4b9c181968787f3b041f18615a8190e13`
 
 8. Configure Network Plugin:
 
