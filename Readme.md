@@ -89,7 +89,54 @@
   
 9. Install MetalLB
 
+    1. Follow the guide outlined here.
 
+        * Ensure that `strictARP: true`.
+
+        * Follow the Installation By Manifest: <https://metallb.universe.tf/installation/#installation-by-manifest>
+
+    2. Configure:
+
+        * Define IPs to use in an `IPAddressPool`:
+
+        ```yaml
+        apiVersion: metallb.io/v1beta1
+        kind: IPAddressPool
+        metadata:
+          namespace: metallb-system
+          name: first-pool
+        spec:
+          addresses:
+          - 10.0.3.200-10.0.3.215
+        ```
+
+        * Set up the correct IP Announcement for Layer 2 Configuration:
+
+        ```yaml
+        apiVersion: metallb.io/v1beta1
+        kind: L2Advertisement
+        metadata:
+          name: example
+          namespace: metallb-system
+        ```
+    
+    3. Applications should now be able to utilize the `IPAddressPool`:
+
+        * Exposing a services as type Load Balancer should correctly assign an address from the pool.
+
+          ```bash
+          kubectl expose deploy/nginx --type=LoadBalancer --port=80 
+          ```
+
+        * Notice the Exteral-IP:
+
+          ```bash
+          toddwardzinski@kubemaster01:~$ kubectl get svc
+          NAME         TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
+          kubernetes   ClusterIP      10.18.0.1     <none>        443/TCP        5h2m
+          nginx        LoadBalancer   10.18.0.235   10.0.3.200    80:32676/TCP   97m
+
+          ```
 ## Issues Run Into &amp; Resolves
 
 * Removal of flannel CNI when things go bad.

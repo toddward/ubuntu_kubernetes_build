@@ -32,6 +32,8 @@
       - {port: "10255", proto: "tcp", state: "enabled", zone: "public" }
       - {port: "8285", proto: "udp", state: "enabled", zone: "public" }
       - {port: "8472", proto: "udp", state: "enabled", zone: "public" }
+      - {port: "8080", proto: "tcp", state: "enabled", zone: "public" }
+      - {port: "443", proto: "tcp", state: "enabled", zone: "public" }
 
 - name: Tune Firewall for Worker Nodes
   hosts: workers
@@ -65,3 +67,7 @@
       - {port: "10255", proto: "tcp", state: "enabled", zone: "public" }
       - {port: "8285", proto: "udp", state: "enabled", zone: "public" }
       - {port: "8472", proto: "udp", state: "enabled", zone: "public" }
+      - {port: "7946", proto: "tcp", state: "enabled", zone: "public" }
+      - {port: "7946", proto: "udp", state: "enabled", zone: "public" }      
+      - {port: "443", proto: "tcp", state: "enabled", zone: "public" }
+      - {port: "80", proto: "tcp", state: "enabled", zone: "public" }
