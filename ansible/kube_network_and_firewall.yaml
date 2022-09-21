@@ -13,7 +13,7 @@
       pkg:
         - firewalld
       update_cache: yes
-  - name: Disable UFW
+  - name: Enable Firewalld and Ensure It's Started
     ansible.builtin.systemd:
       name: firewalld.service
       state: started
@@ -30,6 +30,8 @@
       - {port: "2379-2380", proto: "tcp", state: "enabled", zone: "public" }
       - {port: "10250-10252", proto: "tcp", state: "enabled", zone: "public" }
       - {port: "10255", proto: "tcp", state: "enabled", zone: "public" }
+      - {port: "8285", proto: "udp", state: "enabled", zone: "public" }
+      - {port: "8472", proto: "udp", state: "enabled", zone: "public" }
 
 - name: Tune Firewall for Worker Nodes
   hosts: workers
@@ -45,7 +47,7 @@
       pkg:
         - firewalld
       update_cache: yes
-  - name: Disable UFW
+  - name: Enable Firewalld and Ensure It's Started
     ansible.builtin.systemd:
       name: firewalld.service
       state: started
@@ -61,3 +63,5 @@
       - {port: "30000-32767", proto: "tcp", state: "enabled", zone: "public" }
       - {port: "10250", proto: "tcp", state: "enabled", zone: "public" }
       - {port: "10255", proto: "tcp", state: "enabled", zone: "public" }
+      - {port: "8285", proto: "udp", state: "enabled", zone: "public" }
+      - {port: "8472", proto: "udp", state: "enabled", zone: "public" }

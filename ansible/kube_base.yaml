@@ -3,6 +3,13 @@
   hosts: servers
   become: yes
   tasks:
+  - name: Install Containerd Depdencies
+    ansible.builtin.apt:
+      pkg:
+      - ntpdate
+  - name: Reload Changes To Kernel
+    ansible.builtin.shell:
+      cmd: "ntpdate ntp.ubuntu.com"
   - name: Ensure Servers Are Up To Date
     ansible.builtin.apt:
       name: "*"
