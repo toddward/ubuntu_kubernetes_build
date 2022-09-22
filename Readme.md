@@ -86,8 +86,13 @@
         kube-system    kube-scheduler-kubemaster01            1/1     Running   1 (26m ago)   28m
         kube-system    kube-scheduler-kubemaster02            1/1     Running   0             26m
         ```
-  
-9. Install MetalLB
+9. Configure External Access
+
+    * From the master, copy the context from the master server to the local machine.
+
+    * Guide: <https://sarasagunawardhana.medium.com/kubernetes-configure-context-and-switching-contexts-in-multiple-clusters-part-4-e93677737328>
+    
+10. Install MetalLB
 
     1. Follow the guide outlined here.
 
@@ -157,3 +162,7 @@
 
         Then check kubectl get pod -n kube-system
         ```
+
+## References
+
+* <https://metallb.universe.tf/configuration/>
