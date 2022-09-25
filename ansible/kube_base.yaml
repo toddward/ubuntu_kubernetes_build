@@ -3,17 +3,18 @@
   hosts: servers
   become: yes
   tasks:
-  - name: Install Containerd Depdencies
+  - name: Install ntpdate
     ansible.builtin.apt:
       pkg:
       - ntpdate
-  - name: Reload Changes To Kernel
+  - name: Set server time to ntp.ubuntu.com
     ansible.builtin.shell:
       cmd: "ntpdate ntp.ubuntu.com"
   - name: Ensure Servers Are Up To Date
     ansible.builtin.apt:
       name: "*"
       state: latest
+      update_cache: yes
   - name: Disable Swap
     ansible.builtin.command: swapoff -a
   - name: Ensure Swap Is Not Enabled On Reboot
