@@ -3,71 +3,67 @@
   hosts: masters
   become: yes
   tasks:
-  - name: Disable UFW
+  - name: Ensure SSH Allowed
+    community.general.ufw:
+      rule: allow
+      name: OpenSSH
+
+  - name: Deny everything
+    community.general.ufw:
+      state: enabled
+      default: deny
+
+  - name: Open Required Ports
+    community.general.ufw:
+      rule: allow
+      port: "{{item.port}}"
+      proto: "{{item.proto}}"
+    with_items:
+      - {port: "6443", proto: "tcp" }
+      - {port: "2379:2380", proto: "tcp" }
+      - {port: "10250", proto: "tcp" }
+      - {port: "10259", proto: "tcp"}
+      - {port: "10257", proto: "tcp" }
+      - {port: "8472", proto: "udp" }
+      - {port: "8285", proto: "udp" }
+      - {port: "7946", proto: "udp" }
+      - {port: "7946", proto: "tcp" }
+
+  - name: Ensure UFW Service Enabled
     ansible.builtin.systemd:
       name: ufw.service
-      state: stopped
-      enabled: no
-  - name: Install firewalld
-    ansible.builtin.apt:
-      pkg:
-        - firewalld
-      update_cache: yes
-  - name: Enable Firewalld and Ensure It's Started
-    ansible.builtin.systemd:
-      name: firewalld.service
       state: started
-      enabled: yes 
-  - name: Open Required ports
-    firewalld:
-      permanent: yes
-      immediate: yes
-      port: "{{item.port}}/{{item.proto}}"
-      state: "{{item.state}}"
-      zone: "{{item.zone}}"
-    with_items:
-      - {port: "6443", proto: "tcp", state: "enabled", zone: "public" }
-      - {port: "2379-2380", proto: "tcp", state: "enabled", zone: "public" }
-      - {port: "10250-10252", proto: "tcp", state: "enabled", zone: "public" }
-      - {port: "10255", proto: "tcp", state: "enabled", zone: "public" }
-      - {port: "8285", proto: "udp", state: "enabled", zone: "public" }
-      - {port: "8472", proto: "udp", state: "enabled", zone: "public" }
-      - {port: "8080", proto: "tcp", state: "enabled", zone: "public" }
-      - {port: "443", proto: "tcp", state: "enabled", zone: "public" }
+      enabled: yes
 
 - name: Tune Firewall for Worker Nodes
   hosts: workers
   become: yes
   tasks:
-  - name: Disable UFW
+  - name: Ensure SSH Allowed
+    community.general.ufw:
+      rule: allow
+      name: OpenSSH
+
+  - name: Deny everything
+    community.general.ufw:
+      state: enabled
+      default: deny
+
+  - name: Open Required Ports
+    community.general.ufw:
+      rule: allow
+      port: "{{item.port}}"
+      proto: "{{item.proto}}"
+    with_items:
+      - {port: "30000:32767", proto: "tcp" }
+      - {port: "10250", proto: "tcp" }
+      - {port: "8285", proto: "udp" }
+      - {port: "8472", proto: "udp" }
+      - {port: "7946", proto: "udp" }
+      - {port: "7946", proto: "tcp" }
+
+  - name: Ensure UFW Service Enabled
     ansible.builtin.systemd:
       name: ufw.service
-      state: stopped
-      enabled: no
-  - name: Install firewalld
-    ansible.builtin.apt:
-      pkg:
-        - firewalld
-      update_cache: yes
-  - name: Enable Firewalld and Ensure It's Started
-    ansible.builtin.systemd:
-      name: firewalld.service
       state: started
-      enabled: yes 
-  - name: Open Required ports
-    firewalld:
-      permanent: yes
-      immediate: yes
-      port: "{{item.port}}/{{item.proto}}"
-      state: "{{item.state}}"
-      zone: "{{item.zone}}"
-    with_items:
-      - {port: "30000-32767", proto: "tcp", state: "enabled", zone: "public" }
-      - {port: "10250", proto: "tcp", state: "enabled", zone: "public" }
-      - {port: "10255", proto: "tcp", state: "enabled", zone: "public" }
-      - {port: "8285", proto: "udp", state: "enabled", zone: "public" }
-      - {port: "8472", proto: "udp", state: "enabled", zone: "public" }
-      - {port: "7946", proto: "tcp", state: "enabled", zone: "public" }
-      - {port: "7946", proto: "udp", state: "enabled", zone: "public" }      
-      - {port: "443", proto: "tcp", state: "enabled", zone: "public" }
-      - {port: "80", proto: "tcp", state: "enabled", zone: "public" }
+      enabled: yes
