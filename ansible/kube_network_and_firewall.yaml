@@ -8,10 +8,17 @@
       rule: allow
       name: OpenSSH
 
-  - name: Deny everything
+  - name: Deny incoming
     community.general.ufw:
       state: enabled
       default: deny
+      direction: incoming
+  
+  - name: Allow Outgoing
+    community.general.ufw:
+      state: enabled
+      default: allow
+      direction: outgoing
 
   - name: Open Required Ports
     community.general.ufw:
@@ -44,10 +51,18 @@
       rule: allow
       name: OpenSSH
 
-  - name: Deny everything
+  - name: Deny incoming
     community.general.ufw:
       state: enabled
       default: deny
+      direction: incoming
+  
+  - name: Allow Outgoing
+    community.general.ufw:
+      state: enabled
+      default: allow
+      direction: outgoing
+
 
   - name: Open Required Ports
     community.general.ufw:
