@@ -100,6 +100,8 @@
 
           `sudo kubeadm join 192.168.0.200:6443 --token 9vr73a.a8uxyaju799qwdjv --discovery-token-ca-cert-hash sha256:7c2e69131a36ae2a042a339b33381c6d0d43887e2de83720eff5359e26aec866 --control-plane --certificate-key 92081447c52a73d2297a704f7b0554a4b9c181968787f3b041f18615a8190e13`
 
+    * For additional workers, use the `kubeadm join` without the `--control-plane` flag.
+
     * From the primary master node, pull down the requisite kube information for authentication to the backend control plane.,
 
         ```bash
@@ -140,13 +142,15 @@
         kube-system    kube-scheduler-kubemaster02            1/1     Running   0             26m
         ```
 
-10. Configure External Access
+10. Configure CLI External Access
 
     * From the master, copy the context from the master server to the local machine.
 
-    * Guide: <https://sarasagunawardhana.medium.com/kubernetes-configure-context-and-switching-contexts-in-multiple-clusters-part-4-e93677737328>
+    * Good guide here: <https://sarasagunawardhana.medium.com/kubernetes-configure-context-and-switching-contexts-in-multiple-clusters-part-4-e93677737328>
 
 11. Install MetalLB
+
+    MetalLB allows for a static IP assignment to point to resources within the Kubernetes cluster.
 
     1. Follow the guide outlined here.
 
@@ -216,9 +220,36 @@
           NAME         TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
           kubernetes   ClusterIP      10.18.0.1     <none>        443/TCP        5h2m
           nginx        LoadBalancer   10.18.0.235   10.0.2.200    80:32676/TCP   97m
-
           ```
-## Issues Run Into &amp; Resolves
+
+12. NFS Storage Configuration
+
+    To get storage up and running quickly without much hassle, this guide is using the NFS CSI provided here (https://github.com/kubernetes-csi/csi-driver-nfs).
+
+    1. Define and create your StorageClass (storage/storage_nfs.yaml).
+
+        ```yaml
+        apiVersion: storage.k8s.io/v1
+        kind: StorageClass
+        metadata:
+          name: nfs-csi
+        provisioner: nfs.csi.k8s.io
+        parameters:
+          server: <<server location (ip or hostname)>>
+          share: <<mount path>>
+          # csi.storage.k8s.io/provisioner-secret is only needed for providing mountOptions in DeleteVolume
+          # csi.storage.k8s.io/provisioner-secret-name: "mount-options"
+          # csi.storage.k8s.io/provisioner-secret-namespace: "default"
+        reclaimPolicy: Delete
+        volumeBindingMode: Immediate
+        mountOptions:
+          - nfsvers=4.1
+        ```
+
+    2. Use the following guide to set up examples to appropriately test your NFS CSI to ensure volumes are being created as expected.
+
+        * <https://github.com/kubernetes-csi/csi-driver-nfs/tree/master/deploy/example>
+## Issues Run Into &amp; Resolves 
 
 * Removal of flannel CNI when things go bad.
 
